@@ -3,7 +3,7 @@ session_start();
 require_once '../../config/db.php';
 
 // Check admin access
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
+if (!isset($_SESSION['admin_id'])) {
     header('Location: login.php');
     exit;
 }

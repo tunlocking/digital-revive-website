@@ -1,4 +1,6 @@
-# 🚀 GITHUB DEPLOYMENT SUMMARY
+-- Create test user with password: password123
+INSERT INTO users (username, email, password, role, created_at) 
+VALUES ('admin', 'admin@test.com', '$2y$10$K1DjrVe6SIyEO0/hu0DLCOYUpZcd3yCnSMQf8dgqkkHhD8/LW5sYm', 'admin', NOW());# 🚀 GITHUB DEPLOYMENT SUMMARY
 
 **Date:** December 11, 2025  
 **Status:** ✅ Successfully Pushed to GitHub

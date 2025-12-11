@@ -62,20 +62,91 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action']) && $_POST['a
         body {
             background-color: #f8f9fa;
         }
-        .navbar-custom {
-            background: white;
-            border-bottom: 1px solid #ddd;
-            padding: 15px;
+        .sidebar {
+            background-color: #343a40;
+            min-height: 100vh;
+            padding: 20px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 16.666%;
+        }
+        .sidebar a {
+            color: #fff;
+            text-decoration: none;
+            padding: 12px 20px;
+            display: block;
+            transition: all 0.3s;
+        }
+        .sidebar a:hover, .sidebar a.active {
+            background-color: #667eea;
+            padding-left: 30px;
+        }
+        .main-content {
+            margin-left: 16.666%;
+            padding: 20px;
         }
     </style>
 </head>
 <body>
-    <nav class="navbar-custom d-flex justify-content-between align-items-center">
-        <h3 class="mb-0">🔧 Digital Revive Admin</h3>
-        <button class="btn btn-outline-danger btn-sm" onclick="location.href='logout.php'">Logout</button>
-    </nav>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h4 class="text-white px-3 mb-4">Digital Revive</h4>
+        
+        <!-- Main -->
+        <a href="dashboard.php">
+            <i class="fas fa-chart-line"></i> Dashboard
+        </a>
+        
+        <!-- Products -->
+        <a href="products.php" class="active">
+            <i class="fas fa-box"></i> Products
+        </a>
+        <a href="add_product.php" style="padding-left: 40px; font-size: 14px;">
+            <i class="fas fa-plus"></i> Add Product
+        </a>
+        
+        <!-- Blog -->
+        <a href="blog.php">
+            <i class="fas fa-blog"></i> Blog Posts
+        </a>
+        <a href="add_blog.php" style="padding-left: 40px; font-size: 14px;">
+            <i class="fas fa-plus"></i> Add Blog Post
+        </a>
+        
+        <!-- Services -->
+        <a href="services.php">
+            <i class="fas fa-tools"></i> Services
+        </a>
+        <a href="add_service.php" style="padding-left: 40px; font-size: 14px;">
+            <i class="fas fa-plus"></i> Add Service
+        </a>
+        
+        <!-- Team -->
+        <a href="team.php">
+            <i class="fas fa-users"></i> Team Members
+        </a>
+        <a href="add_team_member.php" style="padding-left: 40px; font-size: 14px;">
+            <i class="fas fa-plus"></i> Add Member
+        </a>
+        
+        <!-- Settings -->
+        <a href="settings.php">
+            <i class="fas fa-cog"></i> Settings
+        </a>
+        
+        <!-- Database -->
+        <a href="db-test.php">
+            <i class="fas fa-database"></i> Database Test
+        </a>
+        
+        <hr class="text-white">
+        <a href="logout.php" class="text-danger">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </a>
+    </div>
     
-    <div class="container-fluid p-4">
+    <div class="main-content">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2>Manage Products</h2>
             <a href="add_product.php" class="btn btn-primary">
@@ -168,7 +239,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action']) && $_POST['a
                 </nav>
             <?php endif; ?>
         <?php endif; ?>
-    </div>
+    </div> <!-- main-content -->
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

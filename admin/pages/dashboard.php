@@ -77,15 +77,50 @@ try {
             <!-- Sidebar -->
             <div class="col-md-2 sidebar">
                 <h4 class="text-white px-3 mb-4">Digital Revive</h4>
+                
+                <!-- Main -->
                 <a href="dashboard.php" class="active">
                     <i class="fas fa-chart-line"></i> Dashboard
                 </a>
+                
+                <!-- Products -->
                 <a href="products.php">
                     <i class="fas fa-box"></i> Products
                 </a>
+                <a href="add_product.php" style="padding-left: 40px; font-size: 14px;">
+                    <i class="fas fa-plus"></i> Add Product
+                </a>
+                
+                <!-- Blog -->
                 <a href="blog.php">
                     <i class="fas fa-blog"></i> Blog Posts
                 </a>
+                <a href="add_blog.php" style="padding-left: 40px; font-size: 14px;">
+                    <i class="fas fa-plus"></i> Add Blog Post
+                </a>
+                
+                <!-- Services -->
+                <a href="services.php">
+                    <i class="fas fa-tools"></i> Services
+                </a>
+                <a href="add_service.php" style="padding-left: 40px; font-size: 14px;">
+                    <i class="fas fa-plus"></i> Add Service
+                </a>
+                
+                <!-- Team -->
+                <a href="team.php">
+                    <i class="fas fa-users"></i> Team Members
+                </a>
+                <a href="add_team_member.php" style="padding-left: 40px; font-size: 14px;">
+                    <i class="fas fa-plus"></i> Add Member
+                </a>
+                
+                <!-- Settings -->
+                <a href="settings.php">
+                    <i class="fas fa-cog"></i> Settings
+                </a>
+                
+                <!-- Database -->
                 <a href="db-test.php">
                     <i class="fas fa-database"></i> Database Test
                 </a>
