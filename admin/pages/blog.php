@@ -21,7 +21,7 @@ try {
     
     // Get blog posts for current page
     $stmt = $conn->prepare("
-        SELECT id, title, slug, banner_image, created_at, updated_at
+        SELECT id, title, slug, featured_image, created_at, updated_at
         FROM blog_posts
         ORDER BY created_at DESC
         LIMIT ? OFFSET ?

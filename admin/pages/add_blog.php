@@ -22,9 +22,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
         try {
             // Handle file upload
-            $banner_image = null;
-            if (!empty($_FILES['banner_image']['name'])) {
-                $file = $_FILES['banner_image'];
+            $featured_image = null;
+            if (!empty($_FILES['featured_image']['name'])) {
+                $file = $_FILES['featured_image'];
                 $allowed = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
                 $filename = basename($file['name']);
                 $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
@@ -44,17 +44,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 
                 $new_filename = time() . '_' . preg_replace('/[^a-z0-9_-]/i', '_', $filename);
                 if (move_uploaded_file($file['tmp_name'], $upload_dir . $new_filename)) {
-                    $banner_image = 'uploads/blog/' . $new_filename;
+                    $featured_image = 'uploads/blog/' . $new_filename;
                 }
             }
             
             // Insert blog post
             $stmt = $conn->prepare("
-                INSERT INTO blog_posts (title, slug, content, banner_image, created_at, updated_at)
-                VALUES (?, ?, ?, ?, NOW(), NOW())
+                INSERT INTO blog_posts (title, slug, content, featured_image, author_id, created_at, updated_at)
+                VALUES (?, ?, ?, ?, ?, NOW(), NOW())
             ");
             
-            $stmt->execute([$title, $slug, $content, $banner_image]);
+            $stmt->execute([$title, $slug, $content, $featured_image, $_SESSION['admin_id']]);
             
             $success = 'Blog post added successfully!';
             $_SESSION['message'] = $success;
@@ -150,10 +150,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <div class="mb-3">
                                 <label class="form-label">Featured Image</label>
                                 <div class="file-upload-wrapper">
-                                    <input type="file" id="bannerImage" name="banner_image" accept="image/*" class="form-control">
+                                    <input type="file" id="featuredImage" name="featured_image" accept="image/*" class="form-control">
                                     <small class="form-text d-block mt-2">Max file size: 5MB. Allowed formats: JPG, PNG, GIF, WEBP</small>
                                 </div>
-                                <img id="bannerPreview" style="display:none;" class="img-fluid mt-3" alt="Banner preview">
+                                <img id="featuredPreview" style="display:none;" class="img-fluid mt-3" alt="Featured preview">
                             </div>
                             
                             <div class="d-flex gap-2">
@@ -175,13 +175,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <script src="../assets/js/admin.js"></script>
     <script>
         // Image preview
-        document.getElementById('bannerImage').addEventListener('change', function(e) {
+        document.getElementById('featuredImage').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(event) {
-                    document.getElementById('bannerPreview').src = event.target.result;
-                    document.getElementById('bannerPreview').style.display = 'block';
+                    document.getElementById('featuredPreview').src = event.target.result;
+                    document.getElementById('featuredPreview').style.display = 'block';
                 };
                 reader.readAsDataURL(file);
             }

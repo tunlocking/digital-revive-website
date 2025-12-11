@@ -42,11 +42,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $error = 'Title and content are required.';
     } else {
         try {
-            $banner_image = $blog_post['banner_image'];
+            $featured_image = $blog_post['featured_image'];
             
             // Handle file upload
-            if (!empty($_FILES['banner_image']['name'])) {
-                $file = $_FILES['banner_image'];
+            if (!empty($_FILES['featured_image']['name'])) {
+                $file = $_FILES['featured_image'];
                 $allowed = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
                 $filename = basename($file['name']);
                 $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
@@ -67,21 +67,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $new_filename = time() . '_' . preg_replace('/[^a-z0-9_-]/i', '_', $filename);
                 if (move_uploaded_file($file['tmp_name'], $upload_dir . $new_filename)) {
                     // Delete old image
-                    if ($blog_post['banner_image'] && file_exists('../../' . $blog_post['banner_image'])) {
-                        unlink('../../' . $blog_post['banner_image']);
+                    if ($blog_post['featured_image'] && file_exists('../../' . $blog_post['featured_image'])) {
+                        unlink('../../' . $blog_post['featured_image']);
                     }
-                    $banner_image = 'uploads/blog/' . $new_filename;
+                    $featured_image = 'uploads/blog/' . $new_filename;
                 }
             }
             
             // Update blog post
             $stmt = $conn->prepare("
                 UPDATE blog_posts 
-                SET title = ?, slug = ?, content = ?, banner_image = ?, updated_at = NOW()
+                SET title = ?, slug = ?, content = ?, featured_image = ?, updated_at = NOW()
                 WHERE id = ?
             ");
             
-            $stmt->execute([$title, $slug, $content, $banner_image, $blog_id]);
+            $stmt->execute([$title, $slug, $content, $featured_image, $blog_id]);
             
             $_SESSION['message'] = 'Blog post updated successfully!';
             $_SESSION['message_type'] = 'success';
@@ -174,16 +174,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <div class="mb-3">
                                 <label class="form-label">Featured Image</label>
                                 <div class="file-upload-wrapper">
-                                    <input type="file" id="bannerImage" name="banner_image" accept="image/*" class="form-control">
+                                    <input type="file" id="featuredImage" name="featured_image" accept="image/*" class="form-control">
                                     <small class="form-text d-block mt-2">Max file size: 5MB. Allowed formats: JPG, PNG, GIF, WEBP</small>
                                 </div>
-                                <?php if ($blog_post['banner_image']): ?>
+                                <?php if ($blog_post['featured_image']): ?>
                                     <div class="mt-3">
-                                        <img src="../../<?php echo $blog_post['banner_image']; ?>" class="img-fluid" style="max-height: 200px;" alt="Current banner">
+                                        <img src="../../<?php echo $blog_post['featured_image']; ?>" class="img-fluid" style="max-height: 200px;" alt="Current featured">
                                         <small class="d-block mt-2 text-muted">Current image. Upload a new one to replace.</small>
                                     </div>
                                 <?php endif; ?>
-                                <img id="bannerPreview" style="display:none;" class="img-fluid mt-3" alt="Banner preview">
+                                <img id="featuredPreview" style="display:none;" class="img-fluid mt-3" alt="Featured preview">
                             </div>
                             
                             <div class="d-flex gap-2">
@@ -204,13 +204,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../assets/js/admin.js"></script>
     <script>
-        document.getElementById('bannerImage').addEventListener('change', function(e) {
+        document.getElementById('featuredImage').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(event) {
-                    document.getElementById('bannerPreview').src = event.target.result;
-                    document.getElementById('bannerPreview').style.display = 'block';
+                    document.getElementById('featuredPreview').src = event.target.result;
+                    document.getElementById('featuredPreview').style.display = 'block';
                 };
                 reader.readAsDataURL(file);
             }
