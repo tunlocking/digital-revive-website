@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Track your repair order status with Digital Revive.">
+    <title>Track Order - Digital Revive</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-mobile-alt"></i> Digital Revive
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="products.html">Products</a></li>
+                    <li class="nav-item"><a class="nav-link" href="services.html">Services</a></li>
+                    <li class="nav-item"><a class="nav-link" href="gallery.html">Gallery</a></li>
+                    <li class="nav-item"><a class="nav-link" href="blog.html">Blog</a></li>
+                    <li class="nav-item"><a class="nav-link" href="faq.html">FAQ</a></li>
+                    <li class="nav-item"><a class="nav-link" href="track.html">Track</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1><i class="fas fa-search"></i> Track Your Repair</h1>
+            <p class="slogan">Monitor Your Order Status in Real-Time</p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main>
+        <section>
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <!-- Tracking Form -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h2 class="card-title mb-4"><i class="fas fa-list"></i> Enter Your Order Details</h2>
+                            <form id="trackingForm">
+                                <div class="mb-3">
+                                    <label for="orderId" class="form-label">Order/Repair ID</label>
+                                    <input type="text" class="form-control form-control-lg" id="orderId" placeholder="e.g., DR-2025-001234" required>
+                                    <small class="text-muted">You can find your order ID in the confirmation email</small>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Email Address</label>
+                                    <input type="email" class="form-control form-control-lg" id="email" placeholder="Your email address" required>
+                                </div>
+                                
+                                <button type="submit" class="btn btn-primary btn-lg w-100">
+                                    <i class="fas fa-search"></i> Track Order
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Tracking Result (Hidden by default) -->
+                    <div id="trackingResult" style="display: none;">
+                        <!-- Sample Status -->
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <h3 class="card-title mb-4"><i class="fas fa-check-circle text-success"></i> Order Details</h3>
+                                
+                                <div class="row mb-4">
+                                    <div class="col-md-6">
+                                        <p><strong>Order ID:</strong> <span id="displayOrderId"></span></p>
+                                        <p><strong>Device:</strong> <span id="displayDevice"></span></p>
+                                        <p><strong>Service:</strong> <span id="displayService"></span></p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p><strong>Status:</strong> <span id="displayStatus" class="badge bg-primary"></span></p>
+                                        <p><strong>Estimated Date:</strong> <span id="displayDate"></span></p>
+                                        <p><strong>Estimated Cost:</strong> <span id="displayCost"></span></p>
+                                    </div>
+                                </div>
+
+                                <h5 class="mb-3"><i class="fas fa-history"></i> Repair Progress</h5>
+                                <div class="timeline">
+                                    <div class="timeline-item">
+                                        <div class="timeline-marker completed">
+                                            <i class="fas fa-check"></i>
+                                        </div>
+                                        <div class="timeline-content">
+                                            <h6>Received</h6>
+                                            <p class="text-muted">December 10, 2025 - 10:30 AM</p>
+                                            <p>Your device has been received at our shop</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="timeline-item">
+                                        <div class="timeline-marker completed">
+                                            <i class="fas fa-check"></i>
+                                        </div>
+                                        <div class="timeline-content">
+                                            <h6>Diagnosed</h6>
+                                            <p class="text-muted">December 10, 2025 - 2:15 PM</p>
+                                            <p>Initial diagnosis completed. Quote sent to your email</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="timeline-item">
+                                        <div class="timeline-marker completed">
+                                            <i class="fas fa-check"></i>
+                                        </div>
+                                        <div class="timeline-content">
+                                            <h6>Approved</h6>
+                                            <p class="text-muted">December 11, 2025 - 9:00 AM</p>
+                                            <p>Repair approved. Work has begun</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="timeline-item">
+                                        <div class="timeline-marker in-progress">
+                                            <i class="fas fa-clock"></i>
+                                        </div>
+                                        <div class="timeline-content">
+                                            <h6>In Progress</h6>
+                                            <p class="text-muted">Estimated completion: December 12, 2025</p>
+                                            <p>Currently being repaired by our technician</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="timeline-item">
+                                        <div class="timeline-marker pending">
+                                            <i class="fas fa-hourglass-half"></i>
+                                        </div>
+                                        <div class="timeline-content">
+                                            <h6>Quality Check</h6>
+                                            <p class="text-muted">Estimated: December 12, 2025</p>
+                                            <p>Final testing and quality assurance</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="timeline-item">
+                                        <div class="timeline-marker pending">
+                                            <i class="fas fa-box"></i>
+                                        </div>
+                                        <div class="timeline-content">
+                                            <h6>Ready for Pickup</h6>
+                                            <p class="text-muted">Estimated: December 12, 2025</p>
+                                            <p>Your device will be ready for pickup or delivery</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="alert alert-info mt-4">
+                                    <i class="fas fa-info-circle"></i> <strong>Need Help?</strong> If you have any questions about your repair, please <a href="contact.html">contact us</a> or call <strong>+212 638 038 932</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- No Order Found (Hidden by default) -->
+                    <div id="noOrderFound" style="display: none;">
+                        <div class="alert alert-warning alert-dismissible fade show">
+                            <h4 class="alert-heading"><i class="fas fa-exclamation-triangle"></i> Order Not Found</h4>
+                            <p>We couldn't find an order with the provided ID and email. Please:</p>
+                            <ul>
+                                <li>Double-check your Order ID</li>
+                                <li>Verify your email address is correct</li>
+                                <li>Contact us if you don't have your Order ID</li>
+                            </ul>
+                            <button type="button" class="btn-close" onclick="document.getElementById('noOrderFound').style.display='none';"></button>
+                        </div>
+                    </div>
+
+                    <!-- Information -->
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="fas fa-lightbulb"></i> About Order Tracking</h5>
+                            <p class="card-text">This tracking system allows you to monitor your repair status in real-time. You'll receive email updates at each major milestone of your repair.</p>
+                            <p class="card-text">If you don't have your Order ID, check your confirmation email or contact us directly.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <section class="text-center" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+            <h2><i class="fas fa-envelope"></i> Still Need Help?</h2>
+            <p>Contact us directly for more information about your repair</p>
+            <a href="contact.html" class="btn btn-light btn-lg mt-3">Contact Us</a>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h5><i class="fas fa-mobile-alt"></i> Digital Revive</h5>
+                <p>Your trusted digital repair and products shop.</p>
+                <div class="social-links">
+                    <a href="https://www.instagram.com/digitalr.ma?igsh=MXIzbTdiOWZtNDBzdA==" target="_blank">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="https://wa.me/212638038932" target="_blank">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h5>Quick Links</h5>
+                <ul>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="products.html">Products</a></li>
+                    <li><a href="services.html">Services</a></li>
+                    <li><a href="blog.html">Blog & Tips</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h5>Services</h5>
+                <ul>
+                    <li><a href="services.html">Smartphone Repair</a></li>
+                    <li><a href="services.html">PC Repair</a></li>
+                    <li><a href="services.html">Electronics Repair</a></li>
+                    <li><a href="contact.html">Get Help</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h5>Contact</h5>
+                <p><i class="fas fa-phone"></i> +212 638 038 932</p>
+                <p><i class="fas fa-envelope"></i> info@digitalrevive.ma</p>
+                <p><i class="fas fa-map-marker-alt"></i> Morocco</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Digital Revive. All rights reserved. | <a href="#privacy">Privacy Policy</a></p>
+        </div>
+    </footer>
+
+    <style>
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .timeline-item {
+            display: flex;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .timeline-marker {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border: 3px solid #ddd;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+            flex-shrink: 0;
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+
+        .timeline-marker.completed {
+            background: #10b981;
+            border-color: #10b981;
+            color: white;
+        }
+
+        .timeline-marker.in-progress {
+            background: #3b82f6;
+            border-color: #3b82f6;
+            color: white;
+            animation: pulse 2s infinite;
+        }
+
+        .timeline-marker.pending {
+            background: #f59e0b;
+            border-color: #f59e0b;
+            color: white;
+        }
+
+        .timeline-content h6 {
+            margin: 0;
+            font-weight: 700;
+            color: var(--light-text);
+        }
+
+        .dark-mode .timeline-content h6 {
+            color: var(--dark-text);
+        }
+
+        .timeline-content p {
+            margin: 5px 0 0;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+            }
+            50% {
+                box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
+            }
+        }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/script.js"></script>
+    <script>
+        document.getElementById('trackingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Show the tracking result (in production, this would call your backend)
+            document.getElementById('trackingResult').style.display = 'block';
+            document.getElementById('displayOrderId').textContent = document.getElementById('orderId').value;
+            document.getElementById('displayDevice').textContent = 'iPhone 13 Pro';
+            document.getElementById('displayService').textContent = 'Screen Replacement';
+            document.getElementById('displayStatus').textContent = 'In Progress';
+            document.getElementById('displayDate').textContent = 'December 12, 2025';
+            document.getElementById('displayCost').textContent = 'MAD 499';
+            window.scrollTo({ top: document.getElementById('trackingResult').offsetTop - 100, behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>
