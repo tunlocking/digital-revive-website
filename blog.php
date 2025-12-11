@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once 'config/db.php';
+require_once 'admin/includes/security.php';
 
 // Get website settings
 $stmt = $conn->query("SELECT setting_key, setting_value FROM settings");
@@ -9,15 +10,20 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     $settings[$row['setting_key']] = $row['setting_value'];
 }
 
-// Pagination
+// Pagination with validation
 $page = intval($_GET['page'] ?? 1);
+$page = max(1, $page); // Ensure at least page 1
 $limit = 6;
 $offset = ($page - 1) * $limit;
 
 // Get total blog posts
 $count_stmt = $conn->query("SELECT COUNT(*) as total FROM blog_posts WHERE published = TRUE");
 $total = $count_stmt->fetch()['total'];
-$total_pages = ceil($total / $limit);
+$total_pages = max(1, ceil($total / $limit));
+
+// Validate page doesn't exceed total pages
+$page = min($page, $total_pages);
+$offset = ($page - 1) * $limit;
 
 // Get blog posts with pagination
 $stmt = $conn->prepare("

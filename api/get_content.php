@@ -2,10 +2,20 @@
 // API endpoint for fetching dynamic website content
 session_start();
 require_once '../config/db.php';
+require_once '../admin/includes/security.php';
 
 header('Content-Type: application/json');
 
-$action = $_GET['action'] ?? '';
+// Sanitize and validate action parameter
+$action = sanitize_input($_GET['action'] ?? '');
+
+// Allow list of valid actions
+$valid_actions = ['get_settings', 'get_services', 'get_products', 'get_blog_posts', 'get_team', 'get_social_links'];
+if (!in_array($action, $valid_actions)) {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'error' => 'Invalid action']);
+    exit();
+}
 
 try {
     switch ($action) {
@@ -45,8 +55,11 @@ try {
             break;
 
         case 'get_blog_posts':
-            // Get published blog posts
+            // Get published blog posts with validated limit
             $limit = intval($_GET['limit'] ?? 10);
+            $limit = min($limit, 100); // Cap at 100 to prevent abuse
+            $limit = max($limit, 1);   // Minimum 1
+            
             $stmt = $conn->prepare("
                 SELECT id, title, slug, content, featured_image, created_at
                 FROM blog_posts

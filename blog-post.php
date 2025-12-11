@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once 'config/db.php';
+require_once 'admin/includes/security.php';
 
 // Get website settings
 $stmt = $conn->query("SELECT setting_key, setting_value FROM settings");
@@ -9,9 +10,9 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     $settings[$row['setting_key']] = $row['setting_value'];
 }
 
-// Get blog post
+// Get blog post with validation
 $id = intval($_GET['id'] ?? 0);
-if ($id === 0) {
+if ($id <= 0) {
     header('Location: blog.php');
     exit;
 }
@@ -30,15 +31,19 @@ if (!$post) {
     exit;
 }
 
-// Get related posts
-$stmt = $conn->prepare("
-    SELECT id, title, slug, featured_image, created_at FROM blog_posts
-    WHERE published = TRUE AND id != ? AND category_id = ?
-    ORDER BY created_at DESC
-    LIMIT 3
-");
-$stmt->execute([$id, $post['category_id']]);
-$related = $stmt->fetchAll(PDO::FETCH_ASSOC);
+// Get related posts with proper error handling
+try {
+    $stmt = $conn->prepare("
+        SELECT id, title, slug, featured_image, created_at FROM blog_posts
+        WHERE published = TRUE AND id != ? AND category_id = ?
+        ORDER BY created_at DESC
+        LIMIT 3
+    ");
+    $stmt->execute([$id, $post['category_id'] ?? 0]);
+    $related = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (Exception $e) {
+    $related = [];
+}
 ?>
 
 <!DOCTYPE html>

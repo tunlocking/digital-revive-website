@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once 'config/db.php';
+require_once 'admin/includes/security.php';
 
 // Get website settings
 $stmt = $conn->query("SELECT setting_key, setting_value FROM settings");
@@ -13,7 +14,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 $stmt = $conn->query("SELECT DISTINCT category FROM services WHERE status = 'active' ORDER BY category");
 $categories = [];
 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-    $categories[] = $row['category'];
+    $categories[] = sanitize_input($row['category']);
 }
 
 // Get all services grouped by category
