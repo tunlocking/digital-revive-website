@@ -1,0 +1,67 @@
+#!/bin/bash
+
+# Digital Revive Website - GitHub Hosting Setup Script
+# This script helps you push your website to GitHub
+
+echo "=================================="
+echo "🚀 Digital Revive GitHub Setup"
+echo "=================================="
+echo ""
+
+# Check if git is installed
+if ! command -v git &> /dev/null; then
+    echo "❌ Git is not installed. Please install Git first."
+    exit 1
+fi
+
+echo "📋 Current Status:"
+echo "✅ Repository initialized at: /Users/pc/Desktop/digital-revive-website"
+echo "✅ Files ready to push: $(find . -type f ! -path './.git/*' | wc -l) files"
+echo ""
+
+echo "📝 Next Steps:"
+echo ""
+echo "1. Create GitHub Account (if you don't have one):"
+echo "   👉 https://github.com/signup"
+echo ""
+echo "2. Create New Repository:"
+echo "   👉 https://github.com/new"
+echo "   - Name: digital-revive-website"
+echo "   - Type: Public"
+echo ""
+echo "3. Copy and run these commands in Terminal:"
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+echo "cd /Users/pc/Desktop/digital-revive-website"
+echo ""
+echo "# Replace YOUR_USERNAME with your GitHub username"
+echo "git remote add origin https://github.com/YOUR_USERNAME/digital-revive-website.git"
+echo "git branch -M main"
+echo "git push -u origin main"
+echo ""
+echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+echo ""
+echo "4. Enable GitHub Pages:"
+echo "   - Go to: https://github.com/YOUR_USERNAME/digital-revive-website"
+echo "   - Click Settings"
+echo "   - Click Pages"
+echo "   - Select branch: main"
+echo "   - Select folder: / (root)"
+echo "   - Click Save"
+echo ""
+echo "5. Your website will be live at:"
+echo "   👉 https://YOUR_USERNAME.github.io/digital-revive-website"
+echo ""
+echo "=================================="
+echo "💡 Tips:"
+echo "=================================="
+echo "• Replace YOUR_USERNAME with your actual GitHub username"
+echo "• GitHub Pages takes 1-2 minutes to build"
+echo "• After changes, use: git add . && git commit -m 'msg' && git push"
+echo "• For custom domain: buy domain and add in GitHub Pages settings"
+echo ""
+echo "❓ Need help?"
+echo "   📚 Full guide: GITHUB_SETUP.md"
+echo "   ⚡ Quick start: QUICK_START.md"
+echo "   📞 Contact: +212 638 038 932"
+echo ""
