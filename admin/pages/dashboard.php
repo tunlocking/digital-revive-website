@@ -100,6 +100,14 @@ try {
                 <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom mb-4">
                     <div class="container-fluid">
                         <span class="navbar-text">Welcome, <strong><?php echo htmlspecialchars($admin_name); ?></strong></span>
+                        <div class="d-flex align-items-center gap-3">
+                            <button class="btn btn-sm btn-outline-secondary" id="themeToggle" title="Toggle Dark Mode">
+                                <i class="fas fa-moon"></i> <span>Dark Mode</span>
+                            </button>
+                            <a href="logout.php" class="btn btn-sm btn-outline-danger">
+                                <i class="fas fa-sign-out-alt me-2"></i>Logout
+                            </a>
+                        </div>
                     </div>
                 </nav>
                 
@@ -166,6 +174,12 @@ try {
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/js/admin.js"></script>
             </div>
         </div>
     </div>
