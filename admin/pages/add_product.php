@@ -85,6 +85,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Product - Digital Revive Admin</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js"></script>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
@@ -143,14 +145,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     </div>
                     
                     <div class="mb-3">
-                        <label class="form-label">Description</label>
-                        <textarea class="form-control" name="description" rows="4"><?php echo htmlspecialchars($_POST['description'] ?? ''); ?></textarea>
+                    <label class="form-label">Description (HTML, CSS & JavaScript Supported)</label>
+                    <textarea id="description" class="form-control" name="description" rows="6"><?php echo htmlspecialchars($_POST['description'] ?? ''); ?></textarea>
+                    <small class="text-muted">You can use HTML, CSS, and JavaScript code in descriptions</small>
                     </div>
                     
                     <div class="mb-3">
                         <label class="form-label">Product Image</label>
-                        <input type="file" class="form-control" name="image" accept="image/*">
-                        <small class="text-muted">Max 5MB. Formats: JPG, PNG, GIF</small>
+                        <input type="file" class="form-control" id="productImage" name="image" accept="image/jpeg,image/png,image/gif,image/webp">
+                        <small class="text-muted">Max 5MB. Supported: JPG, PNG, GIF, WebP</small>
+                        <div id="imagePreview" class="mt-3" style="display:none;">
+                            <img id="previewImg" src="" alt="Preview" style="max-width:200px; max-height:200px; border-radius:8px; border:2px solid #ddd; padding:5px;">
+                        </div>
                     </div>
                     
                     <div class="d-grid gap-2 d-md-flex justify-content-md-between">
@@ -163,5 +169,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Initialize TinyMCE editor for description field
+        tinymce.init({
+            selector: '#description',
+            height: 400,
+            plugins: 'advlist autolink lists link image charmap code fullscreen',
+            toolbar: 'undo redo | formatselect | bold italic | alignleft aligncenter alignright | bullist numlist | link code fullscreen',
+            menubar: false,
+            statusbar: false,
+            valid_elements: '*[*]',
+            extended_valid_elements: '*[*]',
+            entity_encoding: 'raw'
+        });
+
+        // Image preview functionality
+        document.getElementById('productImage').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    document.getElementById('previewImg').src = event.target.result;
+                    document.getElementById('imagePreview').style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
 </body>
 </html>

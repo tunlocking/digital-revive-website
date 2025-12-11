@@ -132,6 +132,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             padding-left: 30px;
         }
     </style>
+    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js"></script>
 </head>
 <body>
     <div class="container-fluid">
@@ -215,23 +216,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             </div>
                             
                             <div class="mb-3">
-                                <label class="form-label">Description</label>
-                                <textarea class="form-control" name="description" rows="5" placeholder="Enter product description..."><?php echo htmlspecialchars($product['description'] ?? ''); ?></textarea>
+                                <label class="form-label">Description (HTML, CSS & JavaScript Supported)</label>
+                                <textarea id="description" class="form-control" name="description" rows="6" placeholder="Enter product description..."><?php echo htmlspecialchars($product['description'] ?? ''); ?></textarea>
+                                <small class="text-muted">You can use HTML, CSS, and JavaScript code in descriptions</small>
                             </div>
                             
                             <div class="mb-3">
                                 <label class="form-label">Product Image</label>
                                 <div class="file-upload-wrapper">
-                                    <input type="file" id="productImage" name="image" accept="image/*" class="form-control">
-                                    <small class="form-text d-block mt-2">Max file size: 5MB. Allowed formats: JPG, PNG, GIF, WEBP</small>
+                                    <input type="file" id="productImage" name="image" accept="image/jpeg,image/png,image/gif,image/webp" class="form-control">
+                                    <small class="form-text d-block mt-2">Max file size: 5MB. Supported: JPG, PNG, GIF, WEBP</small>
                                 </div>
                                 <?php if ($product['image_path']): ?>
                                     <div class="mt-3">
-                                        <img src="../../<?php echo $product['image_path']; ?>" class="img-fluid" style="max-height: 200px;" alt="Current product image">
+                                        <img src="../../<?php echo $product['image_path']; ?>" class="img-fluid" style="max-height: 200px; border-radius:8px; border:2px solid #ddd;" alt="Current product image">
                                         <small class="d-block mt-2 text-muted">Current image. Upload a new one to replace.</small>
                                     </div>
                                 <?php endif; ?>
-                                <img id="imagePreview" style="display:none;" class="img-fluid mt-3" alt="Image preview">
+                                <img id="imagePreview" style="display:none; max-width:200px; max-height:200px; border-radius:8px; border:2px solid #ddd; padding:5px;" class="mt-3" alt="Image preview">
                             </div>
                             
                             <div class="d-flex gap-2">
@@ -252,6 +254,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../assets/js/admin.js"></script>
     <script>
+        // Initialize TinyMCE editor for description field
+        tinymce.init({
+            selector: '#description',
+            height: 400,
+            plugins: 'advlist autolink lists link image charmap code fullscreen',
+            toolbar: 'undo redo | formatselect | bold italic | alignleft aligncenter alignright | bullist numlist | link code fullscreen',
+            menubar: false,
+            statusbar: false,
+            valid_elements: '*[*]',
+            extended_valid_elements: '*[*]',
+            entity_encoding: 'raw'
+        });
+
         document.getElementById('productImage').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
