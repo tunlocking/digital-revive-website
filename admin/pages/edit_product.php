@@ -132,7 +132,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             padding-left: 30px;
         }
     </style>
-    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js"></script>
+    <script src="https://cdn.tiny.cloud/1/dxx5wlmiegyqzsthfo3wciwhg29vyddbilrjzdma7o0czyvm/tinymce/6/tinymce.min.js"></script>
 </head>
 <body>
     <div class="container-fluid">
