@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once '../../config/db.php';
+require_once '../../admin/includes/security.php';
 
 // Redirect if already logged in
 if (isset($_SESSION['admin_id'])) {
@@ -12,7 +13,10 @@ $error = '';
 $success = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $username = trim($_POST['username'] ?? '');
+    if (!verify_csrf_token($_POST['csrf_token'] ?? '')) {
+        $error = 'Security token verification failed. Please try again.';
+    } else {
+    $username = sanitize_input($_POST['username'] ?? '');
     $email = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
     $password_confirm = $_POST['password_confirm'] ?? '';
@@ -52,6 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } catch(PDOException $e) {
             $error = 'Database error. Please try again later.';
         }
+    }
     }
 }
 ?>
@@ -178,6 +183,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
         <?php else: ?>
             <form method="POST">
+                <?php csrf_input(); ?>
                 <div class="mb-3">
                     <label class="form-label">Username</label>
                     <input type="text" class="form-control" name="username" placeholder="Enter username" value="<?php echo htmlspecialchars($_POST['username'] ?? ''); ?>" required>

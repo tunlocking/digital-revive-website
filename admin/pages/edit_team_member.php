@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once '../../config/db.php';
+require_once '../../admin/includes/security.php';
 
 // Check admin access
 if (!isset($_SESSION['admin_id'])) {
@@ -27,12 +28,15 @@ if (!$member) {
 $errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name = trim($_POST['name'] ?? '');
-    $position = trim($_POST['position'] ?? '');
-    $bio = trim($_POST['bio'] ?? '');
-    $skills = trim($_POST['skills'] ?? '');
-    $phone = trim($_POST['phone'] ?? '');
-    $email = trim($_POST['email'] ?? '');
+    if (!verify_csrf_token($_POST['csrf_token'] ?? '')) {
+        $errors[] = 'Security token verification failed. Please try again.';
+    } else {
+    $name = sanitize_input($_POST['name'] ?? '');
+    $position = sanitize_input($_POST['position'] ?? '');
+    $bio = sanitize_input($_POST['bio'] ?? '');
+    $skills = sanitize_input($_POST['skills'] ?? '');
+    $phone = sanitize_input($_POST['phone'] ?? '');
+    $email = filter_var($_POST['email'] ?? '', FILTER_VALIDATE_EMAIL) ? sanitize_input($_POST['email'] ?? '') : '';
     $status = $_POST['status'] ?? 'active';
     $position_order = intval($_POST['position_order'] ?? 0);
     $image_path = $member['image_path'];
@@ -82,6 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header('Location: team.php?success=1');
         exit;
     }
+    }
 }
 ?>
 
@@ -119,6 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="card shadow-sm">
                     <div class="card-body">
                         <form method="POST" enctype="multipart/form-data">
+                            <?php csrf_input(); ?>
                             <div class="row">
                                 <div class="col-md-8">
                                     <div class="row">

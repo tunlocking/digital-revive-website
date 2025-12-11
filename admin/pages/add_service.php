@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once '../../config/db.php';
+require_once '../../admin/includes/security.php';
 
 // Check admin access
 if (!isset($_SESSION['admin_id'])) {
@@ -12,15 +13,18 @@ $errors = [];
 $success = false;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name = trim($_POST['name'] ?? '');
-    $slug = trim($_POST['slug'] ?? '');
-    $category = trim($_POST['category'] ?? '');
-    $description = trim($_POST['description'] ?? '');
-    $detailed_desc = trim($_POST['detailed_description'] ?? '');
+    if (!verify_csrf_token($_POST['csrf_token'] ?? '')) {
+        $errors[] = 'Security token verification failed. Please try again.';
+    } else {
+    $name = sanitize_input($_POST['name'] ?? '');
+    $slug = sanitize_input($_POST['slug'] ?? '');
+    $category = sanitize_input($_POST['category'] ?? '');
+    $description = sanitize_input($_POST['description'] ?? '');
+    $detailed_desc = sanitize_input($_POST['detailed_description'] ?? '');
     $price = floatval($_POST['price'] ?? 0);
     $estimated_days = intval($_POST['estimated_days'] ?? 1);
-    $status = $_POST['status'] ?? 'active';
-    $icon = trim($_POST['icon'] ?? '');
+    $status = sanitize_input($_POST['status'] ?? 'active');
+    $icon = sanitize_input($_POST['icon'] ?? '');
 
     // Validation
     if (empty($name)) $errors[] = 'Service name is required';
@@ -46,6 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Redirect after success
         header('Location: services.php?success=1');
         exit;
+    }
     }
 }
 ?>
@@ -84,6 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="card shadow-sm">
                     <div class="card-body">
                         <form method="POST">
+                            <?php csrf_input(); ?>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="name" class="form-label">Service Name <span class="text-danger">*</span></label>

@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once '../../config/db.php';
+require_once '../../admin/includes/security.php';
 
 // Redirect if already logged in
 if (isset($_SESSION['admin_id'])) {
@@ -12,16 +13,20 @@ $error = '';
 $success = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Get and sanitize input
-    $email = trim($_POST['email'] ?? '');
-    $password = $_POST['password'] ?? '';
-    
-    // Validation
-    if (empty($email) || empty($password)) {
-        $error = 'Email and password are required.';
-    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $error = 'Invalid email format.';
+    // Verify CSRF token
+    if (!verify_csrf_token($_POST['csrf_token'] ?? '')) {
+        $error = 'Security token verification failed. Please try again.';
     } else {
+        // Get and sanitize input
+        $email = trim($_POST['email'] ?? '');
+        $password = $_POST['password'] ?? '';
+        
+        // Validation
+        if (empty($email) || empty($password)) {
+            $error = 'Email and password are required.';
+        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $error = 'Invalid email format.';
+        } else {
         try {
             // Check if user exists
             $stmt = $conn->prepare("SELECT id, username, password FROM users WHERE email = ? LIMIT 1");
@@ -99,6 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <?php endif; ?>
         
         <form method="POST">
+            <?php csrf_input(); ?>
             <div class="mb-3">
                 <label class="form-label">Email</label>
                 <input type="email" class="form-control" name="email" required autofocus>

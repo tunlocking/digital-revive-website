@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once '../../config/db.php';
+require_once '../../admin/includes/security.php';
 
 // Check if user is logged in
 if (!isset($_SESSION['admin_id'])) {
@@ -33,8 +34,11 @@ try {
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $title = trim($_POST['title'] ?? '');
-    $content = trim($_POST['content'] ?? '');
+    if (!verify_csrf_token($_POST['csrf_token'] ?? '')) {
+        $error = 'Security token verification failed. Please try again.';
+    } else {
+    $title = sanitize_input($_POST['title'] ?? '');
+    $content = sanitize_input($_POST['content'] ?? '');
     $slug = strtolower(preg_replace('/[^a-z0-9-]+/', '-', $title));
     
     // Validation
@@ -91,6 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } catch(Exception $e) {
             $error = 'Error: ' . $e->getMessage();
         }
+    }
     }
 }
 ?>
@@ -161,6 +166,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <div class="card">
                     <div class="card-body">
                         <form method="POST" enctype="multipart/form-data">
+                            <?php csrf_input(); ?>
                             <div class="mb-3">
                                 <label class="form-label">Title <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" name="title" placeholder="Enter blog post title" value="<?php echo htmlspecialchars($blog_post['title'] ?? ''); ?>" required>

@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once '../../config/db.php';
+require_once '../../admin/includes/security.php';
 
 // Check admin access
 if (!isset($_SESSION['admin_id'])) {
@@ -20,20 +21,23 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!verify_csrf_token($_POST['csrf_token'] ?? '')) {
+        $errors[] = 'Security token verification failed. Please try again.';
+    } else {
     $updates = [
-        'site_name' => trim($_POST['site_name'] ?? ''),
-        'site_email' => trim($_POST['site_email'] ?? ''),
-        'site_phone' => trim($_POST['site_phone'] ?? ''),
-        'whatsapp_number' => trim($_POST['whatsapp_number'] ?? ''),
-        'instagram_handle' => trim($_POST['instagram_handle'] ?? ''),
-        'site_address' => trim($_POST['site_address'] ?? ''),
-        'business_hours' => trim($_POST['business_hours'] ?? ''),
-        'about_description' => trim($_POST['about_description'] ?? ''),
-        'header_title' => trim($_POST['header_title'] ?? ''),
-        'header_subtitle' => trim($_POST['header_subtitle'] ?? ''),
-        'facebook_url' => trim($_POST['facebook_url'] ?? ''),
-        'twitter_url' => trim($_POST['twitter_url'] ?? ''),
-        'linkedin_url' => trim($_POST['linkedin_url'] ?? ''),
+        'site_name' => sanitize_input($_POST['site_name'] ?? ''),
+        'site_email' => sanitize_input($_POST['site_email'] ?? ''),
+        'site_phone' => sanitize_input($_POST['site_phone'] ?? ''),
+        'whatsapp_number' => sanitize_input($_POST['whatsapp_number'] ?? ''),
+        'instagram_handle' => sanitize_input($_POST['instagram_handle'] ?? ''),
+        'site_address' => sanitize_input($_POST['site_address'] ?? ''),
+        'business_hours' => sanitize_input($_POST['business_hours'] ?? ''),
+        'about_description' => sanitize_input($_POST['about_description'] ?? ''),
+        'header_title' => sanitize_input($_POST['header_title'] ?? ''),
+        'header_subtitle' => sanitize_input($_POST['header_subtitle'] ?? ''),
+        'facebook_url' => sanitize_input($_POST['facebook_url'] ?? ''),
+        'twitter_url' => sanitize_input($_POST['twitter_url'] ?? ''),
+        'linkedin_url' => sanitize_input($_POST['linkedin_url'] ?? ''),
     ];
 
     // Validate emails and URLs
@@ -49,6 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $success = true;
         header('Location: settings.php?success=1');
         exit;
+    }
     }
 }
 ?>
@@ -95,6 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="card shadow-sm">
                     <div class="card-body">
                         <form method="POST">
+                            <?php csrf_input(); ?>
                             <!-- Basic Information -->
                             <h5 class="mb-3"><i class="fas fa-info-circle"></i> Basic Information</h5>
                             <div class="row">

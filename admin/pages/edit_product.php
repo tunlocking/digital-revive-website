@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once '../../config/db.php';
+require_once '../../admin/includes/security.php';
 
 // Check if user is logged in
 if (!isset($_SESSION['admin_id'])) {
@@ -38,12 +39,15 @@ try {
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $name = trim($_POST['name'] ?? '');
+    if (!verify_csrf_token($_POST['csrf_token'] ?? '')) {
+        $error = 'Security token verification failed. Please try again.';
+    } else {
+    $name = sanitize_input($_POST['name'] ?? '');
     $price = floatval($_POST['price'] ?? 0);
     $category_id = intval($_POST['category_id'] ?? 0);
-    $description = trim($_POST['description'] ?? '');
+    $description = sanitize_input($_POST['description'] ?? '');
     $stock_quantity = intval($_POST['stock_quantity'] ?? 0);
-    $status = trim($_POST['status'] ?? 'active');
+    $status = sanitize_input($_POST['status'] ?? 'active');
     
     // Validation
     if (empty($name) || $price <= 0 || $category_id <= 0) {
@@ -101,6 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } catch(Exception $e) {
             $error = 'Error: ' . $e->getMessage();
         }
+    }
     }
 }
 ?>
@@ -173,6 +178,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <div class="card">
                     <div class="card-body">
                         <form method="POST" enctype="multipart/form-data">
+                            <?php csrf_input(); ?>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">Product Name <span class="text-danger">*</span></label>

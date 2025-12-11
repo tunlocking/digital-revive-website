@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once 'config/db.php';
+require_once 'admin/includes/security.php';
 
 // Get website settings
 $stmt = $conn->query("SELECT setting_key, setting_value FROM settings");
@@ -14,58 +15,81 @@ $success = false;
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name = trim($_POST['name'] ?? '');
-    $email = trim($_POST['email'] ?? '');
-    $phone = trim($_POST['phone'] ?? '');
-    $subject = trim($_POST['subject'] ?? '');
-    $message = trim($_POST['message'] ?? '');
+    // Verify CSRF token
+    if (!verify_csrf_token($_POST['csrf_token'] ?? '')) {
+        $errors[] = 'Security token verification failed. Please try again.';
+    } else {
+        $name = sanitize_input($_POST['name'] ?? '');
+        $email = sanitize_email($_POST['email'] ?? '');
+        $phone = sanitize_input($_POST['phone'] ?? '');
+        $subject = sanitize_input($_POST['subject'] ?? '');
+        $message = sanitize_input($_POST['message'] ?? '');
 
-    // Validation
-    if (empty($name)) $errors[] = 'Name is required';
-    if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'Valid email is required';
-    if (empty($phone)) $errors[] = 'Phone number is required';
-    if (empty($subject)) $errors[] = 'Subject is required';
-    if (empty($message)) $errors[] = 'Message is required';
+        // Validation
+        if (empty($name)) $errors[] = 'Name is required';
+        if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'Valid email is required';
+        if (empty($phone)) $errors[] = 'Phone number is required';
+        if (empty($subject)) $errors[] = 'Subject is required';
+        if (empty($message)) $errors[] = 'Message is required';
 
-    if (empty($errors)) {
-        // Save inquiry to database (optional)
-        // You could create a table for inquiries, or just send email
-        
-        // Send email to admin
-        $admin_email = $settings['site_email'] ?? 'admin@example.com';
-        $email_subject = 'New Contact Form Submission - ' . htmlspecialchars($subject);
-        $email_body = "
-        <h2>New Contact Form Submission</h2>
-        <p><strong>Name:</strong> {$name}</p>
-        <p><strong>Email:</strong> {$email}</p>
-        <p><strong>Phone:</strong> {$phone}</p>
-        <p><strong>Subject:</strong> {$subject}</p>
-        <p><strong>Message:</strong></p>
-        <p>{$message}</p>
-        <p><hr></p>
-        <p>Reply to: {$email}</p>
-        ";
+        if (empty($errors)) {
+            try {
+                // Save inquiry to database
+                $stmt = $conn->prepare("
+                    INSERT INTO contact_messages (name, email, phone, subject, message, status, created_at)
+                    VALUES (?, ?, ?, ?, ?, 'new', NOW())
+                ");
+                $stmt->execute([$name, $email, $phone, $subject, $message]);
+                
+                // Send email to admin with proper sanitization
+                $admin_email = $settings['site_email'] ?? 'admin@digitalrevive.ma';
+                
+                // Sanitize email to prevent header injection
+                $email_clean = str_replace(["\r", "\n"], '', $email);
+                $email_clean = filter_var($email_clean, FILTER_VALIDATE_EMAIL);
+                
+                $email_subject = 'New Contact Form Submission - ' . substr($subject, 0, 50);
+                $email_body = "
+                <h2>New Contact Form Submission</h2>
+                <p><strong>Name:</strong> " . htmlspecialchars($name) . "</p>
+                <p><strong>Email:</strong> " . htmlspecialchars($email) . "</p>
+                <p><strong>Phone:</strong> " . htmlspecialchars($phone) . "</p>
+                <p><strong>Subject:</strong> " . htmlspecialchars($subject) . "</p>
+                <p><strong>Message:</strong></p>
+                <p>" . htmlspecialchars($message) . "</p>
+                <p><hr></p>
+                <p>Reply to: " . htmlspecialchars($email) . "</p>
+                ";
 
-        $headers = "MIME-Version: 1.0\r\n";
-        $headers .= "Content-type: text/html; charset=UTF-8\r\n";
-        $headers .= "From: " . $email . "\r\n";
+                $headers = "MIME-Version: 1.0\r\n";
+                $headers .= "Content-type: text/html; charset=UTF-8\r\n";
+                $headers .= "From: noreply@digitalrevive.ma\r\n";
+                $headers .= "Reply-To: " . $email_clean . "\r\n";
 
-        // Send email
-        mail($admin_email, $email_subject, $email_body, $headers);
+                // Send email
+                mail($admin_email, $email_subject, $email_body, $headers);
 
-        // Send confirmation email to user
-        $user_subject = 'We received your message - ' . htmlspecialchars($settings['site_name'] ?? 'Digital Revive');
-        $user_body = "
-        <h2>Thank you for contacting us!</h2>
-        <p>Dear {$name},</p>
-        <p>We have received your message and will get back to you as soon as possible.</p>
-        <p><strong>Your Message:</strong><br>{$subject}</p>
-        <p>Best regards,<br>" . htmlspecialchars($settings['site_name'] ?? 'Digital Revive') . " Team</p>
-        ";
-        
-        mail($email, $user_subject, $user_body, $headers);
+                // Send confirmation email to user
+                $user_subject = 'We received your message - ' . ($settings['site_name'] ?? 'Digital Revive');
+                $user_body = "
+                <h2>Thank you for contacting us!</h2>
+                <p>Dear " . htmlspecialchars($name) . ",</p>
+                <p>We have received your message and will get back to you as soon as possible.</p>
+                <p><strong>Your Subject:</strong><br>" . htmlspecialchars($subject) . "</p>
+                <p>Best regards,<br>" . htmlspecialchars($settings['site_name'] ?? 'Digital Revive') . " Team</p>
+                ";
+                
+                $user_headers = "MIME-Version: 1.0\r\n";
+                $user_headers .= "Content-type: text/html; charset=UTF-8\r\n";
+                $user_headers .= "From: noreply@digitalrevive.ma\r\n";
+                
+                mail($email, $user_subject, $user_body, $user_headers);
 
-        $success = true;
+                $success = true;
+            } catch (Exception $e) {
+                $errors[] = 'Error saving message. Please try again later.';
+            }
+        }
     }
 }
 
@@ -145,6 +169,7 @@ $services = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <?php endif; ?>
 
                             <form method="POST">
+                                <?php csrf_input(); ?>
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label for="name" class="form-label">Full Name <span class="text-danger">*</span></label>

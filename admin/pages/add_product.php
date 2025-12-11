@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once '../../config/db.php';
+require_once '../../admin/includes/security.php';
 
 // Check if user is logged in
 if (!isset($_SESSION['admin_id'])) {
@@ -21,16 +22,20 @@ try {
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $name = trim($_POST['name'] ?? '');
-    $price = floatval($_POST['price'] ?? 0);
-    $category_id = intval($_POST['category_id'] ?? 0);
-    $description = trim($_POST['description'] ?? '');
-    $stock_quantity = intval($_POST['stock_quantity'] ?? 0);
-    
-    // Validation
-    if (empty($name) || $price <= 0 || $category_id <= 0) {
-        $error = 'Please fill in all required fields with valid values.';
+    // Verify CSRF token
+    if (!verify_csrf_token($_POST['csrf_token'] ?? '')) {
+        $error = 'Security token verification failed. Please try again.';
     } else {
+        $name = sanitize_input($_POST['name'] ?? '');
+        $price = floatval($_POST['price'] ?? 0);
+        $category_id = intval($_POST['category_id'] ?? 0);
+        $description = trim($_POST['description'] ?? '');
+        $stock_quantity = intval($_POST['stock_quantity'] ?? 0);
+        
+        // Validation
+        if (empty($name) || $price <= 0 || $category_id <= 0) {
+            $error = 'Please fill in all required fields with valid values.';
+        } else {
         try {
             // Handle file upload
             $image_path = null;
@@ -117,6 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <?php endif; ?>
                 
                 <form method="POST" enctype="multipart/form-data">
+                    <?php csrf_input(); ?>
                     <div class="mb-3">
                         <label class="form-label">Product Name *</label>
                         <input type="text" class="form-control" name="name" value="<?php echo htmlspecialchars($_POST['name'] ?? ''); ?>" required>
